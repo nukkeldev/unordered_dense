@@ -1,4 +1,5 @@
 # unordered_dense
+[![CI](https://github.com/nukkeldev/unordered_dense/actions/workflows/ci.yaml/badge.svg)](https://github.com/nukkeldev/unordered_dense/actions/workflows/ci.yaml)
 
 [unordered_dense](https://github.com/martinus/unordered_dense) packaged with [Zig](https://ziglang.org/).
 
