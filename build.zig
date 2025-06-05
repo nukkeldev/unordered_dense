@@ -12,9 +12,29 @@ pub fn build(b: *std.Build) void {
     const version = getVersion(b.allocator);
     std.log.info("Configuring build for `unordered_dense` version {}!", .{version});
 
-    // Mark include header as installable.
-    const install = b.addInstallFileWithDir(upstream.path(b, "include/ankerl/unordered_dense.h"), .header, "ankerl/unordered_dense.h");
-    b.getInstallStep().dependOn(&install.step);
+    // Get options.
+    const target = b.standardTargetOptions(.{});
+    const optimize = b.standardOptimizeOption(.{});
+    const linkage = b.option(std.builtin.LinkMode, "linkage", "How to build the library") orelse .static;
+
+    // Create the module and library.
+    const mod = b.addModule("unordered_dense", .{
+        .target = target,
+        .optimize = optimize,
+        .link_libcpp = true,
+    });
+
+    const lib = b.addLibrary(.{
+        .name = "unordered_dense",
+        .linkage = linkage,
+        .root_module = mod,
+    });
+    b.installArtifact(lib);
+
+    lib.addCSourceFile(.{ .file = b.path("wrapper.cpp") });
+    lib.addIncludePath(upstream.path(b, "include"));
+
+    lib.installHeadersDirectory(upstream.path(b, "include"), "", .{});
 
     // -- Other Steps --
 
